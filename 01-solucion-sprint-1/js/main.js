@@ -13,6 +13,7 @@ const inputName = document.querySelector('.js-input-name');
 const linkNewFormElememt = document.querySelector('.js-button-new-form');
 const labelMessageError = document.querySelector('.js-label-error');
 const input_search_desc = document.querySelector('.js_in_search_desc');
+const input_race = document.querySelector('.js-race');
 
 
 //Objetos con cada gatito
@@ -127,15 +128,15 @@ function cancelNewKitten(event) {
 }
 
 //Filtrar por descripción
-function filterKitten(event) {
+function filterKitten (event) {
     event.preventDefault();
     const descrSearchText = input_search_desc.value;
+    const raceSearchText = input_race.value;
     listElement.innerHTML = "";
-    for (const kittenItem of kittenDataList) {
-        if (kittenItem.desc.includes(descrSearchText)) {
-            listElement.innerHTML += renderKitten(kittenItem);
-        }
-    }
+    const kittenFiltered = kittenDataList
+    .filter((kittenItem) => kittenItem.desc.includes(descrSearchText))
+    .filter((kittenItem) => kittenItem.race.includes(raceSearchText))
+    renderKittenList(kittenFiltered)
 }
 
 //Mostrar el litado de gatitos en ell HTML
