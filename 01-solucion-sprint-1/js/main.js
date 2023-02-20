@@ -36,7 +36,7 @@ const kittenData_3 = {
     race: "Maine Coon",
 };
 
-const kittenDataList = [kittenData_1, kittenData_2, kittenData_3];
+let kittenDataList = [];
 
 //Funciones
 function renderKitten(kittenData) {
@@ -149,7 +149,28 @@ buttonAdd.addEventListener("click", addNewKitten);
 buttonCancelForm.addEventListener("click", cancelNewKitten);
 
 
+// Variables de github
+
+const GITHUB_USER =  'francescabentin';
+const SERVER_URL = `https://dev.adalab.es/api/kittens/${GITHUB_USER}`;
 
 
+// Fetch
 
+fetch(SERVER_URL, {
+  method: 'GET',
+  headers: {'Content-Type': 'application/json'},
+}).then((response) => response.json())
+.then ((data) => {
+    console.log(data.results);
+   kittenDataList = data.results.map((kitten) => ({
+    name:kitten.name,
+    desc: kitten.desc,
+    image: kitten.image,
+    race: kitten.race,
+   
+   }))
+ renderKittenList(kittenDataList);
+});
+  
 
