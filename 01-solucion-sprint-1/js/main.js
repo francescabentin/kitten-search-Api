@@ -14,6 +14,7 @@ const linkNewFormElememt = document.querySelector('.js-button-new-form');
 const labelMessageError = document.querySelector('.js-label-error');
 const input_search_desc = document.querySelector('.js_in_search_desc');
 const input_race = document.querySelector('.js-race');
+let kittenListStored = JSON.parse(localStorage.getItem('kittensList'));
 
 
 //Objetos con cada gatito
@@ -89,33 +90,57 @@ function clearInputs () {
     inputName.value = "";
 }
 
+// Variables de github
+
+const GITHUB_USER =  'francescabentin';
+const SERVER_URL = `https://dev.adalab.es/api/kittens/${GITHUB_USER}`;
+
 
 //Adicionar nuevo gatito
 function addNewKitten(event) {
     event.preventDefault();
-    const valueDesc = inputDesc.value;
-    const valuePhoto = inputPhoto.value;
-    const valueName = inputName.value;
-    if (valueDesc === "" && valuePhoto === "" && valueName === "") {
+    const newDescription = inputDesc.value;
+    const newImage = inputPhoto.value;
+    const newName = inputName.value;
+    const newRace = input_race.value;
+    const newKittenDataObject = {
+            name: newName,
+            image: newImage,
+            desc : newDescription,
+            race: newRace,
+            };
+    if (newDescription === "" || newImage === "" || newName === "") {
         labelMessageError.innerHTML = "¡Uy! parece que has olvidado algo";
     } else {
-        if (valueDesc !== "" && valuePhoto !== "" && valueName !== "") {
+        if (newDescription !== "" && newImage !== "" && newName !== "") {
             labelMessageError.innerHTML = "";
+            // crear un nuevo gatito y enviarlo al servidor
+            fetch(`https://dev.adalab.es/api/kittens/${GITHUB_USER}`, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(newKittenDataObject),
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                console.log(data)
+                if (data.success) {
+                //Completa y/o modifica el código:
+                //Agrega el nuevo gatito al listado
+                kittenDataList.push(newKittenDataObject);
+                //Guarda el listado actualizado en el local stoarge
+                kittenListStored = localStorage.setItem('kittenDataList', JSON.stringify(kittenDataList))
+                //Visualiza nuevamente el listado de gatitos
+                renderKittenList(kittenDataList);
+                //Limpia los valores de cada input
+                clearInputs();
+                labelMessageError.innerHTML = 'Mola! Un nuevo gatito en Adalab!';
+                } else {
+                labelMessageError.innerHTML = "¡Uy! No se ha podido añadir el gatito";
+                
+                }
+            }); 
         }
     }
-
-const newKittenDataObject = {
-  name: valueName,
-  image: valuePhoto,
-  desc : valueDesc,
-};
-kittenDataList.push(newKittenDataObject);
-
-   clearInputs();
-
- labelMessageError.innerHTML = 'Mola! Un nuevo gatito en Adalab!';
-
- renderKittenList(kittenDataList);
 }
 
 //Cancelar la búsqueda de un gatito
@@ -149,28 +174,26 @@ buttonAdd.addEventListener("click", addNewKitten);
 buttonCancelForm.addEventListener("click", cancelNewKitten);
 
 
-// Variables de github
-
-const GITHUB_USER =  'francescabentin';
-const SERVER_URL = `https://dev.adalab.es/api/kittens/${GITHUB_USER}`;
-
-
-// Fetch
-
-fetch(SERVER_URL, {
+// Fetch y guardar en localStorage
+if (kittenListStored) {
+    renderKittenList(kittenListStored)
+} else {
+ fetch(SERVER_URL, {
   method: 'GET',
   headers: {'Content-Type': 'application/json'},
 }).then((response) => response.json())
 .then ((data) => {
     console.log(data.results);
-   kittenDataList = data.results.map((kitten) => ({
+    kittenDataList = data.results.map((kitten) => ({
     name:kitten.name,
     desc: kitten.desc,
     image: kitten.image,
     race: kitten.race,
-   
-   }))
- renderKittenList(kittenDataList);
+}))
+    kittenListStored = localStorage.setItem('kittenDataList', JSON.stringify(kittenDataList))
+    renderKittenList(kittenDataList);
 });
+}
+
   
 
