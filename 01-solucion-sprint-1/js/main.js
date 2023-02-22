@@ -41,7 +41,41 @@ let kittenDataList = [];
 
 //Funciones
 function renderKitten(kittenData) {
-    const kitten = `<li class="card">
+    
+    const kitten = document.createElement('li')
+    kitten.setAttribute('class','card');
+
+    const articleElement = document.createElement('article');
+
+    const img = document.createElement('img');
+    img.setAttribute('class','card_img');
+    img.setAttribute('src', kittenData.image);
+    img.setAttribute('alt', 'gatito');
+
+    const titleCard = document.createElement('h3');
+    titleCard.setAttribute('class', 'card_title');
+    titleCard.textContent = kittenData.name;
+
+    const raceCard = document.createElement('h3');
+    raceCard.setAttribute('class', 'card_race');
+    raceCard.textContent = kittenData.race;
+
+    const descCard = document.createElement('p');
+    descCard.setAttribute('class', 'card_description');
+    descCard.textContent = kittenData.desc;
+
+
+    listElement.appendChild(kitten);
+    kitten.appendChild(articleElement);
+    articleElement.appendChild(img);
+    articleElement.appendChild(titleCard);
+    articleElement.appendChild(raceCard);
+    articleElement.appendChild(descCard);
+
+    return kitten;
+    
+    
+    /*const kitten = `<li class="card">
     <article>
       <img
         class="card_img"
@@ -56,12 +90,14 @@ function renderKitten(kittenData) {
     </article>
     </li>`;
     return kitten;
+    */
 }
+
 
 function renderKittenList(kittenDataList) {
     listElement.innerHTML = "";
     for (const kittenItem of kittenDataList) {
-        listElement.innerHTML += renderKitten(kittenItem);
+       renderKitten(kittenItem);
     }
 }
 
@@ -190,10 +226,13 @@ if (kittenListStored) {
     image: kitten.image,
     race: kitten.race,
 }))
-    kittenListStored = localStorage.setItem('kittenDataList', JSON.stringify(kittenDataList))
     renderKittenList(kittenDataList);
+    kittenListStored = localStorage.setItem('kittenDataList', JSON.stringify(kittenDataList))
+    
 });
 }
+
+
 
   
 
